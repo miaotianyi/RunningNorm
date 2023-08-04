@@ -151,9 +151,12 @@ class RunningNorm(nn.Module):
 
         if self.training:   # update running statistics
             reduce_axes = tuple(a for a in range(x.ndim) if a not in srs_axes)
-            batch_mean = x.detach().mean(dim=reduce_axes, keepdim=True).movedim(srs_axes, tgt_axes).squeeze()
-            batch_mean_x2 = (x.detach() ** 2).mean(dim=reduce_axes, keepdim=True).movedim(srs_axes, tgt_axes).squeeze()
-            batch_var = batch_mean_x2 - batch_mean ** 2
+            # batch_mean = x.detach().mean(dim=reduce_axes, keepdim=True).movedim(srs_axes, tgt_axes).squeeze()
+            # batch_mean_x2 = (x.detach() ** 2).mean(dim=reduce_axes, keepdim=True).movedim(srs_axes, tgt_axes).squeeze()
+            # batch_var = batch_mean_x2 - batch_mean ** 2
+            batch_var, batch_mean = torch.var_mean(x.detach(), dim=reduce_axes, keepdim=True)
+            batch_mean = batch_mean.movedim(srs_axes, tgt_axes).squeeze()
+            batch_var = batch_var.movedim(srs_axes, tgt_axes).squeeze()
             self.running_mean = (1 - alpha) * self.running_mean + alpha * batch_mean
             self.running_var = (1 - alpha) * self.running_var + alpha * batch_var
 
