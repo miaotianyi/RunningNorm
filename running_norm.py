@@ -78,6 +78,12 @@ class RunningNorm(nn.Module):
 
         momentum : float, default: None
             The value used for the `running_mean` and `running_var` updates.
+
+            It's the "weight" placed on the new batch statistics;
+            higher momentum (smoothing factor) assigns greater importance
+            to current statistics. This is the opposite convention from
+            momentum in optimizers. We stick to BatchNorm's convention.
+
             Default to `None` for cumulative moving average (i.e. simple average).
         """
         super(RunningNorm, self).__init__()
